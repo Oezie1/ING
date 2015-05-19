@@ -21,7 +21,7 @@ GetOptions ( "username|u=s" => \$username,  # string
 
 print "username: $username, password: $password verbose: $verbose\n" if $verbose;
 
-my $mech = WWW::Mechanize->new();
+my $mech = WWW::Mechanize->new( autocheck => 0, timeout => 10 );
 $mech->get( "https://mijn.ing.nl/internetbankieren/SesamLoginServlet" );
 
 my @form   = $mech->forms;
@@ -43,7 +43,7 @@ $mech->get( "https://bankieren.mijn.ing.nl/particulier/betalen/api/accounts" );
 my $accounts = $mech->content();
 print $accounts."\n\n" if $verbose;
 
-if( $save ) {
+if( $save  && $mech->success() ) {
   open (MYFILE, ">accounts${time}.json" );
   print MYFILE $accounts;
   close (MYFILE);
@@ -54,7 +54,7 @@ $mech->get( "https://bankieren.mijn.ing.nl/api/savings-arrangements/savings-acco
 my $savings = $mech->content();
 print $savings."\n\n" if $verbose;
 
-if( $save ) {
+if( $save && $mech->success() ) {
   open (MYFILE, ">savings${time}.json" );
   print MYFILE $savings;
   close (MYFILE);
@@ -65,7 +65,7 @@ $mech->get( "https://bankieren.mijn.ing.nl/api/mortgages" );
 my $mortgages = $mech->content();
 print $mortgages."\n\n" if $verbose;
 
-if( $save ) {
+if( $save && $mech->success() ) {
   open (MYFILE, ">mortgages${time}.json" );
   print MYFILE $mortgages;
   close (MYFILE);
@@ -87,9 +87,9 @@ for( @$data ) {
   my $stocksinfo = $mech->content();
   print $stocksinfo."\n\n" if $verbose;
 
-  if( $save ) {
+  if( $save && $mech->success() ) {
     open (MYFILE, ">stocks$_->{productId}->{compoundId}${time}.json" );
-    print MYFILE $stocks;
+    print MYFILE $stocksinfo;
     close (MYFILE);
   }
 }
