@@ -40,12 +40,12 @@ $mech->submit_form(
 $mech->get( "https://bankieren.mijn.ing.nl/ssm/sso/continue ");
 
 # Fetch accounts
-$mech->get( "https://bankieren.mijn.ing.nl/particulier/betalen/api/accounts" );
+$mech->get( "https://bankieren.mijn.ing.nl/api/g-payments/accounts" );
 my $accounts = $mech->content();
 print $accounts."\n\n" if $verbose;
 
 if( $mech->success() ) {
-  my $accountsdata = $json->decode($accounts);
+  my $accountsdata = $json->decode(substr($accounts,5));
 
   for ( @{$accountsdata->{accounts}} ) {
     printf("%-40s %10.4f\n", $_->{accountNumber}, $_->{balanceBudget});
